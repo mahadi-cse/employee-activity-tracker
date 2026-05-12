@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <span id="employeeId" style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 500;">Loading...</span>
+            <div id="statusBadge" class="status-badge working">
+                <div class="dot"></div>
+                <span id="statusText">Active</span>
+            </div>
+        </div>
+
+        <div class="timer-container">
+            <div class="timer-label">Today's Work Time</div>
+            <div id="timer" class="timer-value">00:00:00</div>
+        </div>
+
+        <div style="text-align: center; font-size: 0.7rem; color: var(--text-secondary); opacity: 0.5;">
+            Tracking system-wide activity
+        </div>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>

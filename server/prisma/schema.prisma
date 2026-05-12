@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Employee {
+  id             String    @id @default(uuid())
+  name           String
+  role           String
+  token          String    @unique @default(uuid())
+  status         String    @default("disconnected") // active | idle | locked | disconnected
+  totalWorkSecs  Int       @default(0)
+  lastSeenAt     DateTime  @default(now())
+  createdAt      DateTime  @default(now())
+  logs           ActivityLog[]
+}
+
+model ActivityLog {
+  id             String    @id @default(uuid())
+  employeeId     String
+  employee       Employee  @relation(fields: [employeeId], references: [id])
+  status         String
+  totalWorkSecs  Int
+  loggedAt       DateTime  @default(now())
+}

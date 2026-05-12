@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Work Tracker",
+  "version": "1.0.0",
+  "description": "System-wide activity and work time tracker.",
+  "permissions": [
+    "idle",
+    "storage",
+    "alarms"
+  ],
+  "host_permissions": [
+    "http://localhost:3000/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "128": "icons/icon128.png"
+  }
+}

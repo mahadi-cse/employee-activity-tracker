@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup - Work Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body { width: 100vw; height: 100vh; overflow: auto; }
+        .setup-card {
+            background: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .logo {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="setup-container">
+        <div class="setup-card">
+            <img src="icons/icon128.png" alt="Logo" class="logo">
+            <h1>Welcome</h1>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Enter your employee token to start tracking your work activity.</p>
+            
+            <div class="input-group">
+                <label for="token" style="font-size: 0.875rem; font-weight: 500;">Employee Token</label>
+                <input type="text" id="token" placeholder="e.g. EMP-123456" autofocus>
+                <button id="saveBtn" style="margin-top: 1rem;">Activate Tracker</button>
+            </div>
+            <p id="errorMsg" style="color: #ef4444; font-size: 0.875rem; margin-top: 1rem;" class="hidden">Please enter a valid token.</p>
+        </div>
+    </div>
+    <script src="setup.js"></script>
+</body>
+</html>
