@@ -67,6 +67,30 @@ export default function Dashboard() {
                 <td>
                   <div style={{ fontWeight: '600' }}>{emp.name}</div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{emp.role}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.25rem' }}>
+                    <code style={{ fontSize: '0.7rem', color: 'var(--accent-primary)', opacity: 0.8 }}>{emp.token}</code>
+                    <button 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigator.clipboard.writeText(emp.token);
+                        const btn = e.currentTarget;
+                        const original = btn.textContent;
+                        btn.textContent = '✓';
+                        setTimeout(() => btn.textContent = original, 2000);
+                      }}
+                      style={{ 
+                        background: 'none', 
+                        border: 'none', 
+                        cursor: 'pointer', 
+                        fontSize: '0.7rem', 
+                        padding: '0', 
+                        color: 'var(--text-secondary)' 
+                      }}
+                      title="Copy Token"
+                    >
+                      📋
+                    </button>
+                  </div>
                 </td>
                 <td>
                   <span className={`badge badge-${emp.status}`}>

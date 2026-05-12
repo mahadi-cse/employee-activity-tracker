@@ -9,7 +9,7 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
 
     // Save to storage
     await chrome.storage.local.set({ employeeToken: token });
-    
+
     // Notify background script
     chrome.runtime.sendMessage({ type: 'TOKEN_UPDATED', token });
 
@@ -17,7 +17,7 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
     const btn = document.getElementById('saveBtn');
     btn.textContent = 'Activated!';
     btn.style.backgroundColor = 'var(--accent-working)';
-    
+
     setTimeout(() => {
         window.close();
     }, 1500);

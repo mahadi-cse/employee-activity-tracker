@@ -7,16 +7,22 @@ import { useParams } from 'next/navigation';
 export default function EmployeeDetail() {
   const { id } = useParams();
   const [logs, setLogs] = useState([]);
+  const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
 
   const fetchLogs = async () => {
     try {
+      setLoading(true);
       const res = await fetch(`http://localhost:3001/api/employees/${id}/logs?date=${selectedDate}`);
       const data = await res.json();
       setLogs(data);
+
+      const histRes = await fetch(`http://localhost:3001/api/employees/${id}/history`);
+      const histData = await histRes.json();
+      setHistory(histData);
     } catch (error) {
-      console.error('Failed to fetch logs:', error);
+      console.error('Failed to fetch data:', error);
     } finally {
       setLoading(false);
     }
@@ -171,6 +177,48 @@ export default function EmployeeDetail() {
                   </td>
                   <td style={{ fontFamily: 'monospace' }}>
                     {session.status === 'active' ? `+${formatTime(session.endWorkSecs - session.startWorkSecs)}` : '--'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      <div className="card" style={{ marginTop: '2rem' }}>
+        <h3 style={{ marginBottom: '1.5rem', fontSize: '1rem' }}>30-Day History (Day-wise)</h3>
+        {history.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>
+            No history found.
+          </div>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>DATE</th>
+                <th>DAY</th>
+                <th>WORK TIME</th>
+                <th>IDLE TIME</th>
+                <th>STATUS</th>
+              </tr>
+            </thead>
+            <tbody>
+              {history.map((day, i) => (
+                <tr key={i}>
+                  <td style={{ fontWeight: '600' }}>{day.date}</td>
+                  <td style={{ color: 'var(--text-secondary)' }}>
+                    {new Date(day.date).toLocaleDateString([], { weekday: 'long' })}
+                  </td>
+                  <td style={{ fontFamily: 'monospace', color: 'var(--accent-working)' }}>
+                    {formatTime(day.totalWorkSecs)}
+                  </td>
+                  <td style={{ fontFamily: 'monospace', color: 'var(--accent-idle)' }}>
+                    {formatTime(day.totalIdleSecs)}
+                  </td>
+                  <td>
+                    <span className={`badge badge-${day.totalWorkSecs > 0 ? 'active' : 'idle'}`}>
+                      {day.totalWorkSecs > 0 ? 'Completed' : 'No Activity'}
+                    </span>
                   </td>
                 </tr>
               ))}

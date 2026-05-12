@@ -107,6 +107,46 @@ app.get('/api/employees/:id/logs', async (req, res) => {
 });
 
 // POST /api/employees - Create new employee
+// Get 30-day history for an employee
+app.get('/api/employees/:id/history', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const logs = await prisma.activityLog.findMany({
+            where: { employeeId: id },
+            orderBy: { loggedAt: 'desc' }
+        });
+
+        // Group by date and calculate totals
+        const historyMap = {};
+        logs.forEach(log => {
+            const date = new Date(log.loggedAt).toISOString().split('T')[0];
+            if (!historyMap[date]) {
+                historyMap[date] = { active: 0, idle: 0 };
+            }
+            
+            // For active time, we take the max totalWorkSecs recorded that day
+            if (log.totalWorkSecs > historyMap[date].active) {
+                historyMap[date].active = log.totalWorkSecs;
+            }
+
+            // For idle time, each idle log represents ~30 seconds of inactivity
+            if (log.status === 'idle') {
+                historyMap[date].idle += 30;
+            }
+        });
+
+        const history = Object.keys(historyMap).map(date => ({
+            date,
+            totalWorkSecs: historyMap[date].active,
+            totalIdleSecs: historyMap[date].idle
+        })).sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 30);
+
+        res.json(history);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.post('/api/employees', async (req, res) => {
     const { name, role } = req.body;
     if (!name || !role) {

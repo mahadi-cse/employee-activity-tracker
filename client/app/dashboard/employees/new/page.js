@@ -37,10 +37,33 @@ export default function NewEmployee() {
             Give this token to <strong>{createdEmployee.name}</strong>. They must enter it in their extension setup screen.
           </p>
           
-          <div style={{ background: 'var(--bg-dark)', padding: '1.5rem', borderRadius: '0.5rem', marginBottom: '2rem' }}>
-            <span style={{ fontSize: '1.25rem', fontFamily: 'monospace', color: 'var(--accent-primary)', fontWeight: '700' }}>
+          <div style={{ background: 'var(--bg-dark)', padding: '1.5rem', borderRadius: '0.5rem', marginBottom: '2rem', position: 'relative' }}>
+            <span id="employee-token" style={{ fontSize: '1.25rem', fontFamily: 'monospace', color: 'var(--accent-primary)', fontWeight: '700' }}>
               {createdEmployee.token}
             </span>
+            <button 
+              onClick={() => {
+                navigator.clipboard.writeText(createdEmployee.token);
+                const btn = document.getElementById('copyBtn');
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = 'Copy Token', 2000);
+              }}
+              id="copyBtn"
+              style={{ 
+                marginTop: '1rem', 
+                display: 'block', 
+                width: '100%', 
+                background: 'rgba(255,255,255,0.05)', 
+                border: '1px solid var(--border)', 
+                color: 'white', 
+                padding: '0.5rem', 
+                borderRadius: '0.25rem',
+                cursor: 'pointer',
+                fontSize: '0.8rem'
+              }}
+            >
+              Copy Token
+            </button>
           </div>
 
           <Link href="/dashboard" className="btn btn-primary">Back to Dashboard</Link>
