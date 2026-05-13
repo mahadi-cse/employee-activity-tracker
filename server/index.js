@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const cron = require('node-cron');
 const prisma = require('./lib/prisma');
+const { swaggerUi, specs } = require('./lib/swagger');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -10,9 +11,39 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
+// Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+
 // --- Extension API ---
 
-// POST /api/activity - Received from extension every 60s
+/**
+ * @swagger
+ * /api/activity:
+ *   post:
+ *     summary: Receive activity from extension
+ *     tags: [Activity]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               employeeId:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *               totalWorkSeconds:
+ *                 type: number
+ *               timestamp:
+ *                 type: string
+ *                 format: date-time
+ *     responses:
+ *       200:
+ *         description: Activity logged successfully
+ *       401:
+ *         description: Unauthorized
+ */
 app.post('/api/activity', async (req, res) => {
     const { employeeId, status, totalWorkSeconds, timestamp } = req.body;
     
@@ -62,7 +93,16 @@ app.post('/api/activity', async (req, res) => {
 
 // --- Dashboard API (Admin) ---
 
-// GET /api/employees - Fetch all employees for dashboard
+/**
+ * @swagger
+ * /api/employees:
+ *   get:
+ *     summary: Fetch all employees
+ *     tags: [Employees]
+ *     responses:
+ *       200:
+ *         description: List of employees
+ */
 app.get('/api/employees', async (req, res) => {
     try {
         const employees = await prisma.employee.findMany({
@@ -74,7 +114,28 @@ app.get('/api/employees', async (req, res) => {
     }
 });
 
-// GET /api/employees/:id/logs - Fetch history for an employee
+/**
+ * @swagger
+ * /api/employees/{id}/logs:
+ *   get:
+ *     summary: Fetch activity logs for an employee
+ *     tags: [Employees]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: date
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: YYYY-MM-DD
+ *     responses:
+ *       200:
+ *         description: List of logs
+ */
 app.get('/api/employees/:id/logs', async (req, res) => {
     const { id } = req.params;
     const { date } = req.query; // YYYY-MM-DD
@@ -107,7 +168,22 @@ app.get('/api/employees/:id/logs', async (req, res) => {
 });
 
 // POST /api/employees - Create new employee
-// Get 30-day history for an employee
+/**
+ * @swagger
+ * /api/employees/{id}/history:
+ *   get:
+ *     summary: Get 30-day history for an employee
+ *     tags: [Employees]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: 30-day history data
+ */
 app.get('/api/employees/:id/history', async (req, res) => {
     const { id } = req.params;
     try {
@@ -147,6 +223,29 @@ app.get('/api/employees/:id/history', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /api/employees:
+ *   post:
+ *     summary: Create new employee
+ *     tags: [Employees]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               role:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Employee created
+ *       400:
+ *         description: Name and role are required
+ */
 app.post('/api/employees', async (req, res) => {
     const { name, role } = req.body;
     if (!name || !role) {
