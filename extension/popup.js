@@ -61,3 +61,8 @@ updateUI();
 
 // Poll for status changes while popup is open
 setInterval(updateUI, 5000);
+
+// Open setup page
+document.getElementById('settingsBtn').addEventListener('click', () => {
+    chrome.tabs.create({ url: 'setup.html' });
+});

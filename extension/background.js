@@ -12,6 +12,17 @@ let employeeToken = null;
 // Initialize
 chrome.idle.setDetectionInterval(IDLE_THRESHOLD);
 
+// Top-level initialization for MV3 Service Worker
+async function initializeState() {
+    const data = await chrome.storage.local.get(['workSeconds', 'lastResetDay', 'employeeToken']);
+    workSeconds = data.workSeconds || 0;
+    employeeToken = data.employeeToken || null;
+    checkDateReset(data.lastResetDay);
+    console.log('State initialized:', { workSeconds, employeeToken });
+}
+
+initializeState();
+
 chrome.runtime.onInstalled.addListener(async () => {
 
     // Setup sync alarm
@@ -119,8 +130,9 @@ function checkDateReset(lastResetDay) {
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     if (request.type === 'GET_STATUS') {
-        const data = await chrome.storage.local.get('workSeconds');
+        const data = await chrome.storage.local.get(['workSeconds', 'employeeToken']);
         workSeconds = data.workSeconds || 0;
+        employeeToken = data.employeeToken || null;
 
         let currentTotal = workSeconds;
         if (lastState === 'active') {

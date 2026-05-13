@@ -27,3 +27,13 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
 document.getElementById('token').addEventListener('input', () => {
     document.getElementById('errorMsg').classList.add('hidden');
 });
+
+// Load existing token if any
+async function loadExistingToken() {
+    const data = await chrome.storage.local.get('employeeToken');
+    if (data.employeeToken) {
+        document.getElementById('token').value = data.employeeToken;
+    }
+}
+
+loadExistingToken();
